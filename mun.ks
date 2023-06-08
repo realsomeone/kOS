@@ -45,7 +45,6 @@ function ascent {
       set thr to 0.
     }
   }
-  stage.
 }
 function circ {
   set apVel to sqrt(body:mu*((2/(apoapsis+body:radius))-(1/ship:obt:semimajoraxis))).
@@ -74,6 +73,7 @@ function perform {
   wait until nde:eta-addons:ke:nodeHalfBurnTime <= 0.
   set thr to list(1,0.5,0.25,0.1).
   for per in thr {
+    if thr = 0.25 and nde:deltav:mag < ship:stagedeltav(ship:stagenum) and stage:ready {stage.}
     lock throttle to per.
     until nde:deltav:mag < per {
       autoStage().
