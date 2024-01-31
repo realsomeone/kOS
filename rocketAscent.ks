@@ -41,14 +41,12 @@ function begin {
   sas off.
   lock steering to heading(90,90,roll).
   print "waiting...".
-  set TWR to 1.2.
+  set TWR to 1.5.
   wait until launch.
   apScreen:hide.
   stage.
   lock throttle to TWR * ship:mass * constant:g0 / max(ship:availablethrust,0.1).
   print "initial ascent...".
-  wait until ship:airspeed >= 50.
-  set TWR to 1.5.
 }
 
 function startAscent {
@@ -56,16 +54,10 @@ function startAscent {
     lock pitch to 90 - vang(ship:up:vector,prograde:vector).
     panels on.
   }
-
-  set pitch to 90.
+  lock pitch to 90 - (ship:altitude/750).
   lock steering to heading(90, pitch, roll).
-  until pitch = 80 { 
-    set pitch to pitch-2.
-    wait until vang(heading(90,pitch):vector, ship:srfPrograde:vector) < 1.
-  }
   set TWR to 2.
-  lock pitch to 90 - vang(ship:up:vector,srfPrograde:vector).
-  // lock steering to heading(90, 90*(constant:e^(-0.00005*ship:altitude)),roll).
+    // lock steering to heading(90, 90*(constant:e^(-0.00005*ship:altitude)),roll).
   print "tilt engaged.".
   wait until ship:apoapsis > 70000 and eta:apoapsis >= 60.
   lock throttle to 0.
