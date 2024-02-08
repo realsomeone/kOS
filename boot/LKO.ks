@@ -7,3 +7,5 @@ if ship:status = "PRELAUNCH" {
   ascendKerbin(80).
   if debug { core:doevent("Close Terminal"). }
 }
+
+runOncePath("0:/libs/space.ks").

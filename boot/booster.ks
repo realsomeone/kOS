@@ -1,13 +1,13 @@
-set debug to true.
+set debug to false.
 if debug { core:doevent("Open Terminal"). }
 set terminal:width to 75.
 set terminal:height to 35.
 runoncepath("0:/boostBack.ks").
 clearScreen.
-if ship:parts:length < 70 {
-  boostBack().
-} else {
-  wait until stage:number = 3.
-  wait until stage:deltav:current < 750.
+
+if not (ship:parts:length < 70) {
+ wait until stage:number = 3.
+  wait until stage:deltav:current < 700.
   stage.
-}
+} 
+boostBack().
