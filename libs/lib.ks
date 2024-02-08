@@ -8,18 +8,25 @@ function TTWR {
   return TWR * ship:mass * (body:mu / body:position:sqrmagnitude) / max(ship:availablethrust,0.01).
 }
 function doMnv {
+  local currRoll is 270 - round(vang(ship:facing:topvector,
+    heading(90,90,270):topvector)).
   sas off.
   local mnv is nextNode.
   local ogVec is mnv:deltav:vec.
-  lock steering to mnv:burnvector.
+  lock steering to heading(vecToYaw(mnv:burnvector),
+    90 - vang(ship:up:vector,mnv:burnvector),
+    currRoll).
   wait until vang(ship:facing:vector,mnv:burnvector) < 2.
   local stTime is mnv:time - addons:ke:nodeHalfBurnTime.
   warpto(stTime - 5).
+  local bTime is addons:ke:nodeBurnTime.
   wait until time:seconds > stTime.
   lock throttle to 1.
   wait until mnv:deltav:mag < 0.5.
   unlock steering.
   sas on.
+  wait until addons:ke:nodeBurnTime < (bTime * 0.1).
+  lock throttle to 0.1.
   wait until vang(mnv:deltav,ogVec) > 5.
   unlock throttle.
   remove mnv.

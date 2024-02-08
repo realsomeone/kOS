@@ -60,7 +60,7 @@ function startAscent {
   lock pitch to 90 - (ship:altitude/750).
   lock steering to heading(90, pitch, roll).
   set TWR to 2.
-    // lock steering to heading(90, 90*(constant:e^(-0.00005*ship:altitude)),roll).
+  // lock steering to heading(90, 90*(constant:e^(-0.00005*ship:altitude)),roll).
   print "tilt engaged.".
   wait until ship:apoapsis > 75000 and eta:apoapsis >= 60.
   lock throttle to 0.

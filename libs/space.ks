@@ -8,4 +8,5 @@ set buttn:onclick to doMnv@.
 set apScreen:x to -400.
 set apScreen:y to 1080 / 3.
 apScreen:show.
-wait until False.
+wait until (body = kerbin and altitude < 70000).
+apScreen:hide.
