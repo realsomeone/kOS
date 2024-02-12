@@ -1,5 +1,5 @@
 runOncePath("0:/libs/lib.ks").
-
+runOncePath("0:/libs/space.ks").
 function ascendKerbin {
   parameter ap.
   precheck(ap).
@@ -40,15 +40,19 @@ function checkAP {
 }
 
 function begin {
-  set roll to 270 - round(vang(ship:facing:topvector,heading(90,90,270):topvector)).
+  set roll to ship:facing:upvector.
   sas off.
-  lock steering to heading(90,90,roll).
+  lock steering to lookDirUp(heading(90,90):vector,roll).
   print "waiting...".
-  set TWR to 1.5.
+  if defined CoT {
+    lock throttle to 1.
+  } else {
+    set TWR to 1.5.
+    lock throttle to TWR * ship:mass * constant:g0 / max(ship:availablethrust,0.1).
+  }
   wait until launch.
   apScreen:hide.
   stage.
-  lock throttle to TWR * ship:mass * constant:g0 / max(ship:availablethrust,0.1).
   print "initial ascent...".
 }
 
@@ -58,12 +62,13 @@ function startAscent {
     panels on.
   }
   lock pitch to 90 - (ship:altitude/750).
-  lock steering to heading(90, pitch, roll).
+  lock steering to lookdirup(heading(90, pitch):vector,roll).
   set TWR to 2.
   // lock steering to heading(90, 90*(constant:e^(-0.00005*ship:altitude)),roll).
   print "tilt engaged.".
   wait until ship:apoapsis > 75000 and eta:apoapsis >= 60.
   lock throttle to 0.
+  lock steering to lookDirUp(prograde:vector,roll).
   until apoapsis >= apTgt or ship:altitude > 70000 {
     if eta:apoapsis < 50 { 
       lock throttle to 1.
@@ -79,7 +84,6 @@ function startAscent {
       wait until ship:apoapsis >= apTgt.
     }
   }
-  lock steering to heading(vecToYaw(prograde:vector),90 - vang(ship:up:vector,prograde:vector),roll).
   wait until vang(prograde:vector,ship:facing:vector) < 2.
   until ship:apoapsis > apTgt {
     lock throttle to 1.

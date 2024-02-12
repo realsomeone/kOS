@@ -8,15 +8,11 @@ function TTWR {
   return TWR * ship:mass * (body:mu / body:position:sqrmagnitude) / max(ship:availablethrust,0.01).
 }
 function doMnv {
-  local currRoll is 270 - round(vang(ship:facing:topvector,
-    heading(90,90,270):topvector)).
   sas off.
   local mnv is nextNode.
   local ogVec is mnv:deltav:vec.
-  lock steering to heading(vecToYaw(mnv:burnvector),
-    90 - vang(ship:up:vector,mnv:burnvector),
-    currRoll).
-  wait until vang(ship:facing:vector,mnv:burnvector) < 2.
+  lock steering to mnv:burnvector.
+  wait until angularVel:mag < 0.1.
   local stTime is mnv:time - addons:ke:nodeHalfBurnTime.
   warpto(stTime - 5).
   local bTime is addons:ke:nodeBurnTime.
@@ -25,8 +21,6 @@ function doMnv {
   wait until mnv:deltav:mag < 0.5.
   unlock steering.
   sas on.
-  wait until addons:ke:nodeBurnTime < (bTime * 0.1).
-  lock throttle to 0.1.
   wait until vang(mnv:deltav,ogVec) > 5.
   unlock throttle.
   remove mnv.
@@ -96,4 +90,26 @@ FUNCTION surface_normal {
 	LOCAL bPos IS localBody:GEOPOSITIONOF(basePos - northVec - sideVec):POSITION - basePos.
 	LOCAL cPos IS localBody:GEOPOSITIONOF(basePos + northVec):POSITION - basePos.
 	RETURN VCRS((aPos - cPos),(bPos - cPos)):NORMALIZED.
+}
+
+function getActivEngs {
+  local engs is 0.
+  list engines in engs.
+  local retlist is list().
+  for eng in engs {
+    if eng:ignition and not eng:flameout {
+      retlist:add(eng).
+    }
+  }
+  return retlist.
+}
+
+function nVec {
+  parameter start, end, color.
+  set huh to vecDraw().
+  set huh:startupdater to { return start. }.
+  set huh:vecupdater to { return end. }.
+  set huh:color to color.
+  set huh:show to true.
+  return huh.
 }
