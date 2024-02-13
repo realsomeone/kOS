@@ -28,6 +28,8 @@ function precheck {
   set apScreen:x to -400.
   set apScreen:y to 1080 / 3.
   apScreen:show.
+  wait until launch.
+  apScreen:hide.
 }
 
 function checkAP {
@@ -50,8 +52,6 @@ function begin {
     set TWR to 1.5.
     lock throttle to TWR * ship:mass * constant:g0 / max(ship:availablethrust,0.1).
   }
-  wait until launch.
-  apScreen:hide.
   stage.
   print "initial ascent...".
 }
