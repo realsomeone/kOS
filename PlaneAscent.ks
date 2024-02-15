@@ -10,30 +10,33 @@ function flyToKerbinOrbit {
 
 function runwayAccel {
   set roll to ship:up:vector.
-  sas off.
+  sas on.
   lock throttle to 1.
-  set pit to heading(90,0).
-  lock steering to lookDirUp(pit:vector,roll).
   wait until launch.
   brakes off.
   togg(AB).
   wait until airspeed > 100.
-  set pit to heading(90,20).
+  sas off.
+  set pit to heading(90,15).
+  lock steering to lookDirUp(pit:vector,roll).
   wait until altitude - ship:geoposition:terrainheight > 20.
   gear off.
-  set pitch to heading(90,20).
+  lock pit to heading(90,20).
 }
 
 function ascend {
+  when altitude > 17000 then { togg(SE). }
   wait until altitude > 15000 and AB[0]:thrust < 100.
   swit(AB).
-  togg(SE).
   when altitude > 65000 then { panels on. }
   wait until apoapsis > apTgt * 0.75.
   togg(AB).
   swit(AB).
   wait until apoapsis > apTgt.
-  lock throttle to 0.
+  until altitude > 70000 {
+    if apoapsis < apTgt { lock throttle to 1. } 
+    else { lock throttle to 0. }
+  }
 }
 
 function finishOrbit {
